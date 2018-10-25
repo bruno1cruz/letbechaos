@@ -1,0 +1,19 @@
+{
+  "name": "letbechaos",
+  "version": "1.0.0",
+  "description": "test application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "bruno1cruz",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bruno1cruz/letbechaos.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bruno1cruz/letbechaos/issues"
+  },
+  "homepage": "https://github.com/bruno1cruz/letbechaos#readme"
+}
