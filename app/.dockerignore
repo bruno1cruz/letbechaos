@@ -1,2 +1,5 @@
+Makefile
+Dockerfile
+
 node_modules
 .env

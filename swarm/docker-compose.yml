@@ -1,0 +1,77 @@
+version: "3.2"
+services:
+  app:
+    image: bruno1cruz/letbechaos:latest
+    env_file: .env
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp
+        mode: ingress
+
+  portainer:
+    image: portainer/portainer
+    ports:
+      - target: 9000
+        published: 9000
+        protocol: tcp
+        mode: ingress
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+  agent:
+    image: portainer/agent
+    environment:
+      AGENT_CLUSTER_ADDR: tasks.agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    ports:
+      - target: 9001
+        published: 9001
+        protocol: tcp
+        mode: host
+    networks:
+      - portainer_agent
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
+
+
+  pumba:
+    image: gaiaadm/pumba:latest
+    command: --random --interval 20s kill re2:^chaos_app
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 0
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+
+
+volumes:
+  portainer_data:
+networks:
+  chaos_test:
+  portainer_agent:
+    driver: overlay
+    attachable: true
